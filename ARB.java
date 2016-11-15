@@ -22,7 +22,7 @@ public class ARB {
 			} else {
 				pai = no.pai.key;
 			}
-			
+
 			// Recuperando o filho da esquerda do nó
 			String esq = "";
 			if (no.esquerda == null) {
@@ -30,7 +30,7 @@ public class ARB {
 			} else {
 				esq = no.esquerda.key;
 			}
-			
+
 			// Recuperando o filho da direita do nó
 			String dir = "";
 			if (no.direita == null) {
@@ -39,23 +39,23 @@ public class ARB {
 				dir = no.direita.key;
 			}
 
-			System.out.printf( "("+pai + ", " + no.key + ", " + getColor(no) + ", " + String.valueOf(altura) + ", " + esq + ", " + dir + ")\n" );
-			
+			System.out.printf("(" + pai + ", " + no.key + ", " + getColor(no) + ", " + String.valueOf(altura) + ", " + esq + ", " + dir + ")\n");
+
 			RBCheck(no.getEsquerda());
 			RBCheck(no.getDireita());
 		}
 	}
-	
+
 	private String getColor(Node no) {
-		if (no.cor == PRETO) 
+		if (no.cor == PRETO)
 			return "preto";
-		
+
 		return "vermelho";
-		
+
 	}
 
 	private int alturaNegra(Node no) {
-		int contador = 0; 
+		int contador = 0;
 		while (no.getEsquerda() != null) {
 			no = no.getEsquerda();
 			if (no.cor == PRETO)
@@ -214,7 +214,7 @@ public class ARB {
 			y.cor = z.cor;
 		}
 
-		if (auxCor) {
+		if ((auxCor == PRETO) && x != null) {
 			RBDeleteFixUp(arvore, x);
 		}
 	}
@@ -224,57 +224,62 @@ public class ARB {
 		while (x != arvore.raiz && x.pai.cor) {
 			if (x == x.pai.esquerda) {
 				w = x.pai.direita;
+				if (w != null) {
+					if (w.cor == VERMELHO) { // Caso 1
+						w.cor = PRETO;
+						x.pai.cor = VERMELHO;
+						leftRotate(arvore.raiz, x.pai);
+						w = x.pai.direita;
+					}
 
-				if (w.cor == VERMELHO) { // Caso 1
-					w.cor = PRETO;
-					x.pai.cor = VERMELHO;
+					if ((w.esquerda.cor == PRETO) && (w.direita.cor == PRETO)) { // Caso 2
+						w.cor = VERMELHO;
+						x = x.pai;
+					} else if (w.direita.cor == PRETO) { // Caso 3
+						w.esquerda.cor = PRETO;
+						w.cor = VERMELHO;
+						rightRotate(arvore.raiz, w);
+						w = x.pai.direita;
+					}
+
+					// Caso 4
+					w.cor = x.pai.cor;
+					x.pai.cor = PRETO;
+					w.direita.cor = PRETO;
 					leftRotate(arvore.raiz, x.pai);
-					w = x.pai.direita;
+					x = arvore.raiz;
+				} else {
+					break;
 				}
-
-				if ((w.esquerda.cor == PRETO) && (w.direita.cor == PRETO)) { // Caso
-																				// 2
-					w.cor = VERMELHO;
-					x = x.pai;
-				} else if (w.direita.cor == PRETO) { // Caso 3
-					w.esquerda.cor = PRETO;
-					w.cor = VERMELHO;
-					rightRotate(arvore.raiz, w);
-					w = x.pai.direita;
-				}
-
-				// Caso 4
-				w.cor = x.pai.cor;
-				x.pai.cor = PRETO;
-				w.direita.cor = PRETO;
-				leftRotate(arvore.raiz, x.pai);
-				x = arvore.raiz;
 			} else {
 				w = x.pai.esquerda;
+				if (w != null) {
+					if (w.cor == VERMELHO) { // Caso 1
+						w.cor = PRETO;
+						x.pai.cor = VERMELHO;
+						rightRotate(arvore.raiz, x.pai);
+						w = x.pai.esquerda;
+					}
 
-				if (w.cor == VERMELHO) { // Caso 1
-					w.cor = PRETO;
-					x.pai.cor = VERMELHO;
+					if (w.esquerda.cor && w.direita.cor) { // Caso 2
+						w.cor = VERMELHO;
+						x = x.pai;
+					} else if (w.esquerda.cor == PRETO) { // Caso 3
+						w.direita.cor = PRETO;
+						w.cor = VERMELHO;
+						leftRotate(arvore.raiz, w);
+						w = x.pai.esquerda;
+					}
+
+					// Caso 4
+					w.cor = x.pai.cor;
+					x.pai.cor = PRETO;
+					w.esquerda.cor = PRETO;
 					rightRotate(arvore.raiz, x.pai);
-					w = x.pai.esquerda;
+					x = arvore.raiz;
+				} else {
+					break;
 				}
-
-				if (w.esquerda.cor && w.direita.cor) { // Caso 2
-					w.cor = VERMELHO;
-					x = x.pai;
-				} else if (w.esquerda.cor == PRETO) { // Caso 3
-					w.direita.cor = PRETO;
-					w.cor = VERMELHO;
-					leftRotate(arvore.raiz, w);
-					w = x.pai.esquerda;
-				}
-
-				// Caso 4
-				w.cor = x.pai.cor;
-				x.pai.cor = PRETO;
-				w.esquerda.cor = PRETO;
-				rightRotate(arvore.raiz, x.pai);
-				x = arvore.raiz;
 			}
 		}
 		x.cor = PRETO;

@@ -1,10 +1,7 @@
 public class Node {
 	Node esquerda;
-
 	Node direita;
-
 	Node pai;
-
 	String key;
 
 	// Vermelho é false e preto é true
