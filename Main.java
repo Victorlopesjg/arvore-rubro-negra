@@ -10,7 +10,7 @@ public class Main {
 		FileReader f;
 		try {
 
-			f = new FileReader("/Users/victoroliveira/Documents/Mestrado/workspace/aaa/src/dicionario.txt");
+			f = new FileReader("dicionario.txt");
 
 			Scanner entrada = new Scanner(f);
 
