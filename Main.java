@@ -29,7 +29,7 @@ public class Main {
 							no = new Node(value);
 							arb.RBInsert(arb, no);
 						} else {
-							System.out.println("A palavra é maior que 20 caracteres");
+							System.out.println("A palavra \"" + value + "\" é maior que 20 caracteres");
 						}
 					} else {
 						System.out.println("A palavra \"" + value + "\" já existe.");
