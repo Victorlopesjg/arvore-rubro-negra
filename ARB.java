@@ -47,15 +47,11 @@ public class ARB {
 	}
 
 	private String getColor(Node no) {
-		if (no.cor == PRETO)
-			return "preto";
-
-		return "vermelho";
-
+		return no.cor ? "preto" : "vermelho";
 	}
 
 	private int alturaNegra(Node no) {
-		int contador = 0;
+		int contador = 1;
 		while (no.getEsquerda() != null) {
 			no = no.getEsquerda();
 			if (no.cor == PRETO)
@@ -72,16 +68,22 @@ public class ARB {
 		}
 	}
 
-	Node search(String value, Node node) {
+	Node search(ARB arvore, String valor) {
+		Node no = search(arvore.raiz, valor);
+		RBCheck(no);
+		return no;
+	}
+	
+	Node search(Node node, String valor) {
 		result = null;
 		if (node != null) {
-			if (node.getKey().toLowerCase().compareTo(value.toLowerCase()) == 0)
+			if (node.getKey().toLowerCase().compareTo(valor.toLowerCase()) == 0)
 				return node;
 
-			if (node.key.toLowerCase().compareTo(value.toLowerCase()) > 0) {
-				result = search(value, node.getEsquerda());
+			if (node.key.toLowerCase().compareTo(valor.toLowerCase()) > 0) {
+				result = search(node.getEsquerda(), valor);
 			} else {
-				result = search(value, node.getDireita());
+				result = search(node.getDireita(), valor);
 			}
 		}
 		return result;
@@ -123,8 +125,9 @@ public class ARB {
 			z.cor = VERMELHO;
 			raiz = z;
 		}
-
+		
 		RBInsertFixUp(arvore, z);
+		
 	}
 
 	private void RBInsertFixUp(ARB arvore, Node z) {
@@ -141,12 +144,12 @@ public class ARB {
 					// Caso 2
 					if (z == z.pai.direita) {
 						z = z.pai;
-						leftRotate(arvore.raiz, z);
+						leftRotate(arvore, z);
 					}
 
 					z.pai.cor = PRETO;
 					z.pai.pai.cor = VERMELHO;
-					rightRotate(arvore.raiz, z.pai.pai);
+					rightRotate(arvore, z.pai.pai);
 				}
 			} else {
 				if (z.pai == z.pai.pai.direita) {
@@ -161,12 +164,12 @@ public class ARB {
 						// Caso 2
 						if (z == z.pai.esquerda) {
 							z = z.pai;
-							rightRotate(arvore.raiz, z);
+							rightRotate(arvore, z);
 						}
 
 						z.pai.cor = PRETO;
 						z.pai.pai.cor = VERMELHO;
-						leftRotate(arvore.raiz, z.pai.pai);
+						leftRotate(arvore, z.pai.pai);
 					}
 				}
 			}
@@ -179,9 +182,10 @@ public class ARB {
 			arb.raiz = v;
 		} else if (u == u.pai.esquerda) {
 			u.pai.esquerda = v;
-		} else if (u.pai.direita == v) {
+		} else 
+			u.pai.direita = v;
+		if (v != null)
 			v.pai = u.pai;
-		}
 	}
 
 	public void RBDelete(ARB arvore, Node z) {
@@ -201,7 +205,8 @@ public class ARB {
 			x = y.direita;
 
 			if (y.pai == z) {
-				x.pai = y;
+				if (x != null)
+					x.pai = y;
 			} else {
 				RBTransplant(arvore, y, y.direita);
 				y.direita = z.direita;
@@ -228,7 +233,7 @@ public class ARB {
 					if (w.cor == VERMELHO) { // Caso 1
 						w.cor = PRETO;
 						x.pai.cor = VERMELHO;
-						leftRotate(arvore.raiz, x.pai);
+						leftRotate(arvore, x.pai);
 						w = x.pai.direita;
 					}
 
@@ -238,7 +243,7 @@ public class ARB {
 					} else if (w.direita.cor == PRETO) { // Caso 3
 						w.esquerda.cor = PRETO;
 						w.cor = VERMELHO;
-						rightRotate(arvore.raiz, w);
+						rightRotate(arvore, w);
 						w = x.pai.direita;
 					}
 
@@ -246,7 +251,7 @@ public class ARB {
 					w.cor = x.pai.cor;
 					x.pai.cor = PRETO;
 					w.direita.cor = PRETO;
-					leftRotate(arvore.raiz, x.pai);
+					leftRotate(arvore, x.pai);
 					x = arvore.raiz;
 				} else {
 					break;
@@ -257,7 +262,7 @@ public class ARB {
 					if (w.cor == VERMELHO) { // Caso 1
 						w.cor = PRETO;
 						x.pai.cor = VERMELHO;
-						rightRotate(arvore.raiz, x.pai);
+						rightRotate(arvore, x.pai);
 						w = x.pai.esquerda;
 					}
 
@@ -267,7 +272,7 @@ public class ARB {
 					} else if (w.esquerda.cor == PRETO) { // Caso 3
 						w.direita.cor = PRETO;
 						w.cor = VERMELHO;
-						leftRotate(arvore.raiz, w);
+						leftRotate(arvore, w);
 						w = x.pai.esquerda;
 					}
 
@@ -275,7 +280,7 @@ public class ARB {
 					w.cor = x.pai.cor;
 					x.pai.cor = PRETO;
 					w.esquerda.cor = PRETO;
-					rightRotate(arvore.raiz, x.pai);
+					rightRotate(arvore, x.pai);
 					x = arvore.raiz;
 				} else {
 					break;
@@ -297,7 +302,7 @@ public class ARB {
 		return result;
 	}
 
-	private void leftRotate(Node root, Node x) {
+	private void leftRotate(ARB arvore, Node x) {
 		Node y = x.direita;
 		x.direita = y.esquerda;
 
@@ -308,7 +313,7 @@ public class ARB {
 		y.pai = x.pai;
 
 		if (x.pai == null) {
-			root = y;
+			arvore.raiz = y;
 		} else if (x == x.pai.esquerda) {
 			x.pai.esquerda = y;
 		} else {
@@ -319,7 +324,7 @@ public class ARB {
 		x.pai = y;
 	}
 
-	private void rightRotate(Node root, Node x) {
+	private void rightRotate(ARB arvore, Node x) {
 		Node y = x.esquerda;
 		x.esquerda = y.direita;
 
@@ -330,7 +335,7 @@ public class ARB {
 		y.pai = x.pai;
 
 		if (x.pai == null) {
-			root = y;
+			arvore.raiz = y;
 		} else if (x == x.pai.direita) {
 			x.pai.direita = y;
 		} else {
