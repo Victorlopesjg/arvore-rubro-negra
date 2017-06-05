@@ -51,7 +51,7 @@ public class ARB {
 	}
 
 	private int alturaNegra(Node no) {
-		int contador = 1;
+		int contador = 0;
 		while (no.getEsquerda() != null) {
 			no = no.getEsquerda();
 			if (no.cor == PRETO)
@@ -70,7 +70,7 @@ public class ARB {
 
 	Node search(ARB arvore, String valor) {
 		Node no = search(arvore.raiz, valor);
-		RBCheck(no);
+		//RBCheck(no);
 		return no;
 	}
 	
